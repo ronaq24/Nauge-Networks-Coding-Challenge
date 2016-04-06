@@ -4,7 +4,7 @@ This project is part of a coding challenge that I did with Nauge Networks. The p
 After cloning my repo into a folder in your computer, go into terminal and run the following command from the cloned folder:
 Create a virtualenv by running the following command:
 1. $ virtualenv venv
-2. $ ./venv/bin/activate
+2. $ . venv/bin/activate
 3. $ pip install -r requirements.txt
 4. $ python server.py
 5. Then point your browser to http://127.0.0.1:5000/
