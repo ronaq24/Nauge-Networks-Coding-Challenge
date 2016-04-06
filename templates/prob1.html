@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title> Problem 1 </title>
+</head>
+
+<body>
+	<h1> Problem 1 </h1>
+
+	<form id ="regular">
+  		IP Address:<br>
+  		<input type="text" name="ip" value=""><br>
+  		Subnet Mask:<br>
+ 	 	<input type="text" name="subnet" value=""><br><br>
+  		<input type="submit" value="Submit">
+	</form>
+
+	<p> You may also use CIDR notation below: </p>
+	
+	<form id='bonus'>
+  		CIDR Notation:<br>
+  		<input type="text" name="cidr" value=""><br>
+  		<input type="submit" value="Submit">
+	</form>
+
+	<p> Network Block: <span id='netblock'> </span> </p>
+	<p> Host Identifier: <span id='hostid'> </span> </p>
+
+	<p id='check'> </p>
+	<p id='check2'> </p>
+	<p id='check3'> </p>
+
+	<script>
+	//change made
+
+		function doWork(ip,subnet)
+		{	
+			var ipArray = ip.split('.');
+			if(ipArray.length != 4)
+			{
+				window.alert("Invalid IP Address");
+				//document.getElementById('error').innerHTML = "Invalid IP Address"
+			}
+			var i;
+			for(i = 0; i < ipArray.length;i++)
+			{
+				if(ipArray[i] == "")
+				{
+					window.alert("Invalid IP Address");
+					//document.getElementById('error').innerHTML = "Invalid IP Address"
+				}
+				var x = parseInt(ipArray[i],10);
+				if(x < 0 || x > 255)
+				{
+					window.alert("Invalid IP Address");
+					//document.getElementById('error').innerHTML = "Invalid IP Address"
+				}
+			}
+
+			// validate the subnet
+			// 4 numbers
+			// number is not too big or small
+			// convert each decimal number into binary- all the ones should be on the left and 0s to the right, no intermixing of 1s and 0s
+			
+			var subnetArray = subnet.split('.');
+			if(subnetArray.length != 4)
+			{
+				window.alert("Invalid Subnet");
+				//document.getElementById('error2').innerHTML = "Invalid Subnet"
+			}
+			var s;
+			for( s= 0; s < subnetArray.length; s++)
+			{
+				if(subnetArray[s] == "")
+				{
+					window.alert("Invalid Subnet");
+					//document.getElementById('error2').innerHTML = "Invalid Subnet"
+				}
+				var x = parseInt(subnetArray[s],10);
+				if(x < 0 || x > 255)
+				{
+					window.alert("Invalid Subnet");
+					//document.getElementById('error2').innerHTML = "Invalid Subnet"
+				}
+			}
+
+			var subnetDecimalArray = [];
+			for(s = 0; s<subnetArray.length; s++)
+			{
+				var dec = parseInt(subnetArray[s],10).toString(2);
+				// pad the number so its 8-bit
+				var str = String('00000000' + dec).slice(-8);
+				
+				subnetDecimalArray[s]= str;
+			}
+			
+			var temp = subnetDecimalArray.join();
+			var subnetDecimalString = temp.replace(/,/g , "");
+
+			//document.getElementById('check').innerHTML = subnetDecimalString;
+
+			var t;
+			for(t =0; t < subnetDecimalString.length; t++)
+			{
+				if(t < subnetDecimalString-1 && (subnetDecimalString[t] == '0' && subnetDecimalString[t+1] == '1'))
+				{
+					window.alert("Invalid Subnet");
+					break;
+				}
+
+			}
+
+			// DONE WITH IP AND SUBNET VALIDATION
+
+			var ipDecimalArray = [];
+			for(s = 0; s<ipArray.length; s++)
+			{
+				var dec = parseInt(ipArray[s],10).toString(2);
+				// pad the number so its 8-bit
+				var str = String('00000000' + dec).slice(-8);
+				
+				ipDecimalArray[s]= str;
+			}
+
+			//testing purposes
+			//document.getElementById('check').innerHTML = parseInt(ipDecimalArray[3],2);
+			//document.getElementById('check2').innerHTML = subnetDecimalArray;
+
+			var result1, result2, result3, result4;
+			var r1 = (parseInt(ipDecimalArray[0],2) & parseInt(subnetDecimalArray[0],2)).toString(2);
+			result1 = String('00000000' + r1).slice(-8);
+			//document.getElementById('check3').innerHTML = result1;
+			var r2 = (parseInt(ipDecimalArray[1],2) & parseInt(subnetDecimalArray[1],2)).toString(2);
+			result2 = String('00000000' + r2).slice(-8);
+			//document.getElementById('check3').innerHTML = result2;
+			var r3 = (parseInt(ipDecimalArray[2],2) & parseInt(subnetDecimalArray[2],2)).toString(2);
+			result3 = String('00000000' + r3).slice(-8);
+			//document.getElementById('check3').innerHTML = result3;
+			var r4 = (parseInt(ipDecimalArray[3],2) & parseInt(subnetDecimalArray[3],2)).toString(2);
+			result4 = String('00000000' + r4).slice(-8);
+			//result4 = r4;
+			//document.getElementById('check3').innerHTML = result4;
+
+			var netBlock = [];
+			var hostId = [];
+
+			if(result1 != '00000000')
+			{
+				netBlock[0] = parseInt(result1,2);
+				hostId[0] = 0;
+			}
+			else if(result1 == '00000000')
+			{
+				netBlock[0] = 0;
+				hostId[0] = parseInt(ipDecimalArray[0],2);
+			}
+
+			if(result2 != '00000000')
+			{
+				netBlock[1] = parseInt(result2,2);
+				hostId[1] = 0;
+			}
+			else if(result2 == '00000000')
+			{
+				netBlock[1] = 0;
+				hostId[1] = parseInt(ipDecimalArray[1],2);
+			}
+
+			if(result3 != '00000000')
+			{
+				netBlock[2] = parseInt(result3,2);
+				hostId[2] = 0;
+			}
+			else if(result3 == '00000000')
+			{
+				netBlock[2] = 0;
+				hostId[2] = parseInt(ipDecimalArray[2],2);
+			}
+
+			//document.getElementById('check').innerHTML = result4;
+			if(result4 != '00000000')
+			{
+				netBlock[3] = parseInt(result4,2);
+				hostId[3] = 0;
+			}
+			//document.getElementById('check').innerHTML = parseInt(ipDecimalArray[3],2);
+			else if(result4 == '00000000')
+			{
+				netBlock[3] = 0;
+				hostId[3] = parseInt(ipDecimalArray[3],2);
+			}
+
+
+			var fNB = netBlock.join();
+			var fHI = hostId.join();
+
+			var finalNetBlock = fNB.replace(/,/g , ".");
+			var finalHostId = fHI.replace(/,/g , ".");
+
+			document.getElementById('netblock').innerHTML = finalNetBlock;
+			document.getElementById('hostid').innerHTML = finalHostId;
+		}
+
+		document.querySelector('form#regular').addEventListener('submit',function(e) {
+			e.preventDefault();  // no page refreshes
+
+			var ip= '';
+			var subnet = '';
+
+			// this is if they use the first method
+			ip = document.querySelector('form input[name=ip]').value;
+			subnet = document.querySelector('form input[name=subnet]').value;
+			doWork(ip,subnet);
+		})
+
+		document.querySelector('form#bonus').addEventListener('submit',function(e){
+			e.preventDefault();
+
+			var ip = '';
+			var subnet = '';
+
+			var cidr = document.querySelector('form input[name=cidr]').value
+			var cidrArray = cidr.split(/[^0-9]/);
+			// check the array
+			//document.getElementById('check3').innerHTML = cidrArray;
+			ip = cidrArray[0] + '.' + cidrArray[1] + '.' + cidrArray[2] + '.' + cidrArray[3];
+			// check ip
+			//document.getElementById('check3').innerHTML = ip;
+
+			//now create the subnet
+			var count = 0;
+			var subnetString = '';
+			var oneCount = 0;
+			var maxOnes = parseInt(cidrArray[4], 10);
+			var r;
+			for(r = 0; r < 32 ; r++)
+			{
+				if(count == 8)
+				{
+					subnetString += '.';
+					count = 0;
+				}
+				if(oneCount < maxOnes)
+				{
+					subnetString += '1';
+					count++;
+					oneCount++;
+				}
+				else
+				{
+					subnetString += '0';
+					count++;
+				}
+			}
+
+			// check the resulting subnetString
+			//document.getElementById('check3').innerHTML = subnetString;
+			var sArray = subnetString.split('.');
+			//document.getElementById('check3').innerHTML = sArray;
+			var finalSub = parseInt(sArray[0],2) + '.' + parseInt(sArray[1],2) + '.' + parseInt(sArray[2],2) + '.' + parseInt(sArray[3],2);
+			subnet = finalSub;
+			//document.getElementById('check3').innerHTML = subnet;
+			doWork(ip,subnet);
+
+		})
+
+
+
+	</script>
+
+
+
+</body>
+
+</html>
